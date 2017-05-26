@@ -268,7 +268,7 @@ interface IPathFinderOpts {
     /**
      * Request from the pathfinder to generate a {@link CostMatrix} for a certain room. The callback accepts one argument, <code>roomName</code>. This callback will only be called once per room per search. If you are running multiple pathfinding operations in a single room and in a single tick you may consider caching your CostMatrix to speed up your code. Please read the CostMatrix documentation below for more information on CostMatrix. If you return <code>false</code> from the callback the requested room will not be searched, and it won't count against <code>maxRooms</code>
      */
-    roomCallback?(roomName: string): boolean,
+    roomCallback?(roomName: string): CostMatrix | false,
 
     /**
      * Cost for walking on plain positions. The default is 1.
