@@ -192,6 +192,7 @@ const FIND_SOURCES = 105;
  * @global
  * @const
  * @default 106
+ * @deprecated FIND_DROPPED_ENERGY constant is considered deprecated and will be removed soon. Please use FIND_DROPPED_RESOURCES instead.
  */
 const FIND_DROPPED_ENERGY = 106;
 
