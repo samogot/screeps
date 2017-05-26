@@ -1,7 +1,7 @@
 const getEnergy = creep => {
 
-    var droppedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_ENERGY);
-    var container = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: struct => struct.structureType == STRUCTURE_CONTAINER && !struct.pos.inRangeTo(struct.room.controller, 4)});
+    var droppedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+    var container = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: struct => struct.structureType == STRUCTURE_CONTAINER && !struct.pos.inRangeTo(struct.room.controller, 4) || struct.structureType == STRUCTURE_STORAGE});
     if (droppedEnergy) {
         if (creep.pickup(droppedEnergy) == ERR_NOT_IN_RANGE) {
             creep.moveTo(droppedEnergy, {visualizePathStyle: {stroke: '#ffffff'}});
@@ -17,7 +17,7 @@ const getEnergy = creep => {
 const getStructuresByTypes = (room, types) =>
     room.find(FIND_MY_STRUCTURES, {
         filter: structure =>
-        structure.energy < structure.energyCapacity && types.some(type => type == structure.structureType)
+        (structure.energy != undefined ? structure.energy < structure.energyCapacity : structure.store && _.sum(structure.store) < structure.storeCapacity) && types.some(type => type == structure.structureType)
     });
 
 const getCreepsByRoles = (room, roles) =>
