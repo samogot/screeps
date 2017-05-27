@@ -17,7 +17,7 @@ module.exports.loop = function () {
             }
 
             var closestDamagedStructure = structure.pos.findClosestByRange(FIND_STRUCTURES, {
-                filter: (structure) => structure.hits < structure.hitsMax / 2 && structure.structureType != STRUCTURE_WALL && structure.structureType != STRUCTURE_RAMPART
+                filter: (structure) => structure.hits < structure.hitsMax && structure.structureType != STRUCTURE_WALL && structure.structureType != STRUCTURE_RAMPART
             });
             if (closestDamagedStructure) {
                 structure.repair(closestDamagedStructure);
@@ -41,7 +41,7 @@ module.exports.loop = function () {
         },
         builder: {
             count: 1,
-            body: [...Array(Math.floor((capacity - 150) / 100)).fill(WORK), CARRY, CARRY, MOVE]
+            body: [...Array(Math.floor((capacity - 200) / 100)).fill(WORK), CARRY, CARRY, MOVE, MOVE]
         },
     };
 

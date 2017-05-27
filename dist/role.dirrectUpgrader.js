@@ -46,7 +46,7 @@ var roleDirrectUpgrader = {
                 creep.upgradeController(creep.room.controller)
             }
             else {
-                var droppedResources = creep.pos.findInRange(FIND_DROPPED_ENERGY, 1);
+                var droppedResources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
                 if (droppedResources[0]) {
                     creep.pickup(droppedResources[0]);
                 }
