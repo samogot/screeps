@@ -1,12 +1,12 @@
-var roleHarvester = {
+module.exports =  {
 
     name: 'harvester',
 
     /** @param {Creep} creep **/
     run: function (creep) {
         if (!creep.memory.source) {
-            var sources = creep.room.find(FIND_SOURCES);
-            var source = creep.pos.findClosestByPath(sources);
+            const sources = creep.room.find(FIND_SOURCES);
+            const source = creep.pos.findClosestByPath(sources);
             if (source) {
                 if (creep.pos.isNearTo(source)) {
                     creep.memory.source = source.id;
@@ -17,12 +17,10 @@ var roleHarvester = {
             }
         }
         if (creep.memory.source) {
-            if (creep.harvest(Game.getObjectById(creep.memory.source)) == ERR_NOT_IN_RANGE) {
+            if (creep.harvest(Game.getObjectById(creep.memory.source)) === ERR_NOT_IN_RANGE) {
                 creep.memory.source = null;
                 console.log(creep, ' unexpected lost his source');
             }
         }
     }
 };
-
-module.exports = roleHarvester;

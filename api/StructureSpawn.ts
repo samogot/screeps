@@ -164,7 +164,7 @@ interface StructureSpawn extends OwnedStructure {
      * @param {string} name (optional) The name of a new creep. It should be unique creep name, i.e. the <code>Game.creeps</code> object should not contain another creep with the same name (hash key). If not defined, a random name will be generated.
      * @param memory (optional) The memory of a new creep. If provided, it will be immediately stored into <code>Memory.creeps[name]</code>.
      *
-     * @return {number} The name of a new creep or one of these error codes:
+     * @return {number | string} The name of a new creep or one of these error codes:
      * <table>
      *   <tr>
      *     <td>{@link ERR_NOT_OWNER}</td>
@@ -209,7 +209,7 @@ interface StructureSpawn extends OwnedStructure {
 	 *     console.log('Spawn error: '+result);
 	 * }
      */
-    createCreep(body: Array<string>, name?: string, memory?: any): number,
+    createCreep(body: Array<string>, name?: string, memory?: any): number | string,
 
     /**
      * Kill the creep and drop up to 100% of resources spent on its spawning and boosting depending on remaining life time. The target should be at adjacent square.

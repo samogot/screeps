@@ -1,20 +1,20 @@
 const getEnergy = creep => {
 
-    var droppedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
-    var container = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: struct => struct.structureType == STRUCTURE_CONTAINER && !struct.pos.inRangeTo(struct.room.controller, 4) && struct.store.energy > 0});
-    var storage = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: struct => struct.structureType == STRUCTURE_STORAGE && struct.store.energy > 0});
+    const droppedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+    const container = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: struct => struct.structureType === STRUCTURE_CONTAINER && !struct.pos.inRangeTo(struct.room.controller, 4) && struct.store.energy > 0});
+    const storage = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: struct => struct.structureType === STRUCTURE_STORAGE && struct.store.energy > 0});
     if (droppedEnergy) {
-        if (creep.pickup(droppedEnergy) == ERR_NOT_IN_RANGE) {
+        if (creep.pickup(droppedEnergy) === ERR_NOT_IN_RANGE) {
             creep.moveTo(droppedEnergy, {visualizePathStyle: {stroke: '#ffffff'}});
         }
     }
     if (!droppedEnergy || creep.pos.isNearTo(container) && droppedEnergy.amount <= HARVEST_POWER * 5) {
-        if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        if (creep.withdraw(container, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
             creep.moveTo(container, {visualizePathStyle: {stroke: '#ffffff'}});
         }
     }
-    if(!container && !droppedEnergy && storage) {
-        if (creep.withdraw(storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+    if (!container && !droppedEnergy && storage) {
+        if (creep.withdraw(storage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
             creep.moveTo(storage, {visualizePathStyle: {stroke: '#ffffff'}});
         }
     }
@@ -23,28 +23,28 @@ const getEnergy = creep => {
 const getStructuresByTypes = (room, types) =>
     room.find(FIND_MY_STRUCTURES, {
         filter: structure =>
-        (structure.energy != undefined ? structure.energy < structure.energyCapacity : structure.store && _.sum(structure.store) < structure.storeCapacity) && types.some(type => type == structure.structureType)
+        (structure.energy !== undefined ? structure.energy < structure.energyCapacity : structure.store && _.sum(structure.store) < structure.storeCapacity) && types.some(type => type == structure.structureType)
     });
 
 const getCreepsByRoles = (room, roles) =>
     room.find(FIND_MY_CREEPS, {
         filter: creep =>
-        creep.carry.energy < creep.carryCapacity && roles.some(role => role == creep.memory.role) && !creep.spawning
+        creep.carry.energy < creep.carryCapacity && roles.some(role => role === creep.memory.role) && !creep.spawning
     });
 
 
 const transferToClosest = (creep, targets) => {
     if (targets.length > 0) {
         const target = creep.pos.findClosestByPath(targets);
-        if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            if (creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}}) == ERR_NO_PATH) {
+        if (creep.transfer(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+            if (creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}}) === ERR_NO_PATH) {
                 return false;
             }
         }
         return true;
     }
     return false;
-}
+};
 
 
 module.exports = {
@@ -53,7 +53,7 @@ module.exports = {
 
     /** @param {Creep} creep **/
     run: function (creep) {
-        if (creep.carry.energy == 0 || creep.carry.energy < creep.carryCapacity && (creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1).length > 0 || creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: struct => struct.structureType == STRUCTURE_CONTAINER && !struct.pos.inRangeTo(struct.room.controller, 4)}).length > 0)) {
+        if (creep.carry.energy === 0 || creep.carry.energy < creep.carryCapacity && (creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1).length > 0 || creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: struct => struct.structureType == STRUCTURE_CONTAINER && !struct.pos.inRangeTo(struct.room.controller, 4)}).length > 0)) {
             getEnergy(creep);
         }
         else {
