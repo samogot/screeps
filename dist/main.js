@@ -13,7 +13,7 @@ module.exports.loop = function () {
         if (structure.structureType === STRUCTURE_TOWER) {
             const closestHostileHealer = structure.pos.findClosestByRange(FIND_HOSTILE_CREEPS, {filter: creep => creep.getActiveBodyparts(HEAL) > 0});
             const closestHostile = structure.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-            const closestDamagedCreep = structure.pos.findClosestByRange(FIND_MY_CREEPS_CREEPS, {filter: creep => creep.hits < creep.hitsMax});
+            const closestDamagedCreep = structure.pos.findClosestByRange(FIND_MY_CREEPS, {filter: creep => creep.hits < creep.hitsMax});
             const closestDamagedStructure = structure.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure) => structure.hits < structure.hitsMax && structure.structureType !== STRUCTURE_WALL && structure.structureType !== STRUCTURE_RAMPART
             });
