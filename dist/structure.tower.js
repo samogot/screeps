@@ -13,7 +13,7 @@ const getPowerAt = (tower, target, optimalPower) => optimalPower * TOWER_OPTIMAL
  * @param {number} basePower
  * @param {string} method
  */
-const getRealPower = (creep, needBodyPart, basePower, method) => _.sumBy(creep.body, bodyPart => {
+const getRealPower = (creep, needBodyPart, basePower, method) => _.sum(creep.body, bodyPart => {
     let power = 0;
     if (bodyPart.hits > 0 && bodyPart.type === needBodyPart) {
         power = basePower;
@@ -24,7 +24,13 @@ const getRealPower = (creep, needBodyPart, basePower, method) => _.sumBy(creep.b
     return power;
 });
 
-const getDefenceBoost = creep => creep.body.reduce((prod, bodyPart) => prod * ((bodyPart.hits > 0 && bodyPart.type === TOUGH && bodyPart.boost && BOOSTS[TOUGH][bodyPart.boost].damage) || 1), 1);
+const getDefenceBoost = creep => {
+    const firstActiveBodyPart = creep.body.find(bodyPart => bodyPart.hits > 0);
+    if (firstActiveBodyPart.type === TOUGH && firstActiveBodyPart.boost) {
+        return BOOSTS[TOUGH][firstActiveBodyPart.boost].damage;
+    }
+    return 1;
+};
 
 /** @param {Creep} creep */
 const getMeleeHealPerTick = (creep) => getRealPower(creep, HEAL, HEAL_POWER, 'heal');
@@ -49,8 +55,8 @@ const tryAttackHostile = (tower) => {
             const KILL_IN_N_TICKS = 3;
             const dpt = getTowerDamagePerTick(tower, closestHostile);
             if (closestHostile.hits < dpt * KILL_IN_N_TICKS) {
-                const meleeHPT = _.sumBy(closestHostile.pos.findInRange(FIND_HOSTILE_CREEPS, 1), creep => getMeleeHealPerTick(creep));
-                const rangedHPT = _.sumBy(closestHostile.pos.findInRange(FIND_HOSTILE_CREEPS, 3,
+                const meleeHPT = _.sum(closestHostile.pos.findInRange(FIND_HOSTILE_CREEPS, 1), creep => getMeleeHealPerTick(creep));
+                const rangedHPT = _.sum(closestHostile.pos.findInRange(FIND_HOSTILE_CREEPS, 3,
                     {filter: creep => closestHostile.pos.getRangeTo(creep) > 1}), creep => getRangedHealPerTick(creep));
                 const hpt = meleeHPT + rangedHPT;
                 if (closestHostile.hits < (dpt - hps) * KILL_IN_N_TICKS) {
