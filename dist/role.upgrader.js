@@ -23,12 +23,12 @@ module.exports = {
 
         if (!creep.memory.hasOwnProperty('moving') || !creep.memory.moving && !hasAnyEnergySource(creep.pos)) {
             creep.memory.moving = true;
-            creep.say('🔄 move');
+            creep.say('\uD83D\uDD04 move');
         }
 
-        if (creep.memory.moving && creep.memory.targetPos && creep.pos.isEqualTo(creep.memory.targetPos)) {
+        if (creep.memory.moving && creep.memory.targetPos && creep.pos.isEqualTo(creep.memory.targetPos.x, creep.memory.targetPos.y)) {
             creep.memory.moving = false;
-            creep.say('⚡ upgrade');
+            creep.say('\u26A1\uFE0F upgrade');
         }
 
         if (creep.memory.moving) {
@@ -62,7 +62,7 @@ module.exports = {
                 }
                 else {
                     console.log(creep.name + ' can\'t find target position');
-                    creep.say('⚠ no target');
+                    creep.say('\u26A0\uFE0F no target');
                 }
             }
             if (targetPos) {
