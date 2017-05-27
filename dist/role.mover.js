@@ -1,15 +1,21 @@
 const getEnergy = creep => {
 
     var droppedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
-    var container = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: struct => struct.structureType == STRUCTURE_CONTAINER && !struct.pos.inRangeTo(struct.room.controller, 4) || struct.structureType == STRUCTURE_STORAGE});
+    var container = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: struct => struct.structureType == STRUCTURE_CONTAINER && !struct.pos.inRangeTo(struct.room.controller, 4) && struct.store.energy > 0});
+    var storage = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter: struct => struct.structureType == STRUCTURE_STORAGE && struct.store.energy > 0});
     if (droppedEnergy) {
         if (creep.pickup(droppedEnergy) == ERR_NOT_IN_RANGE) {
             creep.moveTo(droppedEnergy, {visualizePathStyle: {stroke: '#ffffff'}});
         }
     }
-    if (!droppedEnergy || creep.pos.isNearTo(container) && container.structureType == STRUCTURE_CONTAINER && droppedEnergy.amount <= HARVEST_POWER * 5) {
+    if (!droppedEnergy || creep.pos.isNearTo(container) && droppedEnergy.amount <= HARVEST_POWER * 5) {
         if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             creep.moveTo(container, {visualizePathStyle: {stroke: '#ffffff'}});
+        }
+    }
+    if(!container && !droppedEnergy && storage) {
+        if (creep.withdraw(storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(storage, {visualizePathStyle: {stroke: '#ffffff'}});
         }
     }
 };
