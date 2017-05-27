@@ -76,7 +76,7 @@ module.exports = {
         else {
             const droppedResources = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1, res => res.resourceType === RESOURCE_ENERGY && res.amount > HARVEST_POWER * 5);
             const containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: struct => struct.structureType === STRUCTURE_CONTAINER});
-            const otherUpgraders = creep.pos.findInRange(FIND_CREEPS, 1, {filter: creep => creep.memory.role === 'upgrader' && creep.carry.energy > 0 && hasContainerEnergySource(creep.pos)});
+            const otherUpgraders = creep.pos.findInRange(FIND_MY_CREEPS, 1, {filter: creep => creep.memory.role === 'upgrader' && creep.carry.energy > 0 && hasContainerEnergySource(creep.pos)});
             if (droppedResources[0]) {
                 creep.pickup(droppedResources[0]);
             }

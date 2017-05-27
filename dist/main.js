@@ -11,16 +11,23 @@ module.exports.loop = function () {
 
     for (let structure of _.values(Game.structures)) {
         if (structure.structureType === STRUCTURE_TOWER) {
+            const closestHostileHealer = structure.pos.findClosestByRange(FIND_HOSTILE_CREEPS, {filter: creep => creep.getActiveBodyparts(HEAL) > 0});
             const closestHostile = structure.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-            if (closestHostile) {
-                structure.attack(closestHostile);
-            }
-
+            const closestDamagedCreep = structure.pos.findClosestByRange(FIND_MY_CREEPS_CREEPS, {filter: creep => creep.hits < creep.hitsMax});
             const closestDamagedStructure = structure.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure) => structure.hits < structure.hitsMax && structure.structureType !== STRUCTURE_WALL && structure.structureType !== STRUCTURE_RAMPART
             });
-            if (closestDamagedStructure) {
+            if (closestHostileHealer) {
+                structure.attack(closestHostileHealer);
+            }
+            else if (closestHostile) {
+                structure.attack(closestHostile);
+            }
+            else if (closestDamagedStructure) {
                 structure.repair(closestDamagedStructure);
+            }
+            else if (closestDamagedCreep) {
+                structure.heal(closestDamagedCreep);
             }
         }
     }
