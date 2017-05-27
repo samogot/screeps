@@ -9,16 +9,36 @@ function deleteUnusedMemory() {
 
 const capitalizeFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1);
 
-module.exports = function (rules) {
+/** @param {StructureSpawn} spawn */
+module.exports = function (spawn) {
     const counts = {};
     const getCount = role => counts[role] || 0;
     for (let creep of _.values(Game.creeps)) {
-        if (creep.spawning || creep.ticksToLive > CREEP_SPAWN_TIME * rules[creep.memory.role].body.length) {
+        if (creep.spawning || creep.ticksToLive > CREEP_SPAWN_TIME * creep.body.length) {
             counts[creep.memory.role] = getCount(creep.memory.role) + 1;
         }
     }
 
-    const spawn = Game.spawns['Spawn1'];
+    const capacity = !counts.mover ? Math.max(spawn.room.energyAvailable, SPAWN_ENERGY_START) : spawn.room.energyCapacityAvailable;
+    const rules = {
+        mover: {
+            count: 1,
+            body: [...new Array(Math.floor(capacity / 100)).fill(CARRY), ...new Array(Math.floor(capacity / 100)).fill(MOVE)]
+        },
+        harvester: {
+            count: 2,
+            body: [...new Array(Math.min(Math.floor((capacity - 50) / 100), 5)).fill(WORK), MOVE]
+        },
+        upgrader: {
+            count: 2,
+            body: [...new Array(Math.min(Math.floor((capacity - 100) / 100), 7)).fill(WORK), CARRY, MOVE]
+        },
+        builder: {
+            count: 1,
+            body: [...new Array(Math.floor((capacity - 200) / 100)).fill(WORK), CARRY, CARRY, MOVE, MOVE]
+        },
+    };
+
     for (let role of _.keys(rules)) {
         if (getCount(role) < rules[role].count && spawn.canCreateCreep(rules[role].body) === OK) {
             deleteUnusedMemory();

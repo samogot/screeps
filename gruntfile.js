@@ -1,4 +1,4 @@
-var private = require('private');
+const private = require('./private');
 
 module.exports = function (grunt) {
 

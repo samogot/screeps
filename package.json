@@ -6,6 +6,7 @@
   "author": "samogot <samogot@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "grunt": "^1.0.1",
     "grunt-screeps": "^1.2.1"
   },
   "dependencies": {

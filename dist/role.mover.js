@@ -8,7 +8,7 @@ const getEnergy = creep => {
             creep.moveTo(droppedEnergy, {visualizePathStyle: {stroke: '#ffffff'}});
         }
     }
-    if (!droppedEnergy || creep.pos.isNearTo(container) && droppedEnergy.amount <= HARVEST_POWER * 5) {
+    if (container && (!droppedEnergy || creep.pos.isNearTo(container) && (droppedEnergy.amount <= HARVEST_POWER * 5 || !creep.pos.isNearTo(droppedEnergy) ))) {
         if (creep.withdraw(container, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
             creep.moveTo(container, {visualizePathStyle: {stroke: '#ffffff'}});
         }
@@ -53,7 +53,7 @@ module.exports = {
 
     /** @param {Creep} creep **/
     run: function (creep) {
-        if (creep.carry.energy === 0 || creep.carry.energy < creep.carryCapacity && (creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1).length > 0 || creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: struct => struct.structureType == STRUCTURE_CONTAINER && !struct.pos.inRangeTo(struct.room.controller, 4)}).length > 0)) {
+        if (creep.carry.energy === 0 || creep.carry.energy < creep.carryCapacity && (creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1).length > 0 || creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: struct => struct.structureType === STRUCTURE_CONTAINER && !struct.pos.inRangeTo(struct.room.controller, 4)}).length > 0)) {
             getEnergy(creep);
         }
         else {
