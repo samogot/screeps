@@ -25,8 +25,8 @@ module.exports = function (rules) {
             const namePrefix = capitalizeFirstLetter(role);
             let newName;
             do {
-                name = namePrefix + (Math.floor(Math.random() * 99) + 1);
-            } while (spawn.canCreateCreep(rules[role].body, name) === ERR_NAME_EXISTS);
+                newName = namePrefix + (Math.floor(Math.random() * 99) + 1);
+            } while (spawn.canCreateCreep(rules[role].body, newName) === ERR_NAME_EXISTS);
             spawn.createCreep(rules[role].body, newName, {role});
             console.log('Spawning new ' + role + ': ' + newName);
             spawn.spawning = {name: newName};
@@ -39,7 +39,7 @@ module.exports = function (rules) {
         spawn.room.visual.text(
             '\uD83D\uDEE0' + spawningCreep.name,
             Game.spawns['Spawn1'].pos.x,
-            Game.spawns['Spawn1'].pos.y + 1,
+            Game.spawns['Spawn1'].pos.y - 1,
             {opacity: 0.6});
     }
 };
