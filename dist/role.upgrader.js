@@ -4,7 +4,16 @@ module.exports = {
 
     /** @param {Creep} creep **/
     run: function (creep) {
-        const hasContainerEnergySource = position => position.findInRange(FIND_STRUCTURES, 1, {filter: struct => struct.structureType === STRUCTURE_CONTAINER}).length > 0;
+        let container;
+        if (creep.room.controller.memory.container) {
+            container = Game.getObjectById(creep.room.controller.memory.container);
+        } else {
+            container = creep.room.controller.pos.findInRange(FIND_STRUCTURES, 4, {filter: struct => struct.structureType === STRUCTURE_CONTAINER})[0];
+            creep.room.controller.memory.container = container.id;
+        }
+
+
+        const hasContainerEnergySource = position => position.isNearTo(container);
         const hasAnyEnergySource = position => hasContainerEnergySource(position) || position.findInRange(FIND_MY_CREEPS, 1, {filter: creep => creep.memory.role === 'upgrader' && hasContainerEnergySource(creep.pos)}).length > 0;
 
         if (!creep.memory.hasOwnProperty('moving') || !creep.memory.moving && !hasAnyEnergySource(creep.pos)) {
@@ -21,7 +30,7 @@ module.exports = {
             let targetPos;
             if (creep.memory.targetPos) {
                 targetPos = new RoomPosition(creep.memory.targetPos.x, creep.memory.targetPos.y, creep.memory.targetPos.roomName);
-                if (targetPos.isObstacle || !hasAnyEnergySource(targetPos)) {
+                if ((targetPos.isObstacle && !targetPos.isEqualTo(creep)) || !hasAnyEnergySource(targetPos)) {
                     targetPos = null;
                 }
             }
@@ -30,7 +39,7 @@ module.exports = {
                 for (let i = -3; i <= 3; ++i) {
                     for (let j = -3; j <= 3; ++j) {
                         const position = creep.room.getPositionAt(creep.room.controller.pos.x + i, creep.room.controller.pos.y + j);
-                        if (!position.isObstacle && hasAnyEnergySource(position)) {
+                        if ((!position.isObstacle || position.isEqualTo(creep)) && hasAnyEnergySource(position)) {
                             positionCandidates.push(position);
                         }
                     }
@@ -40,7 +49,7 @@ module.exports = {
                     targetPos = creep.room.controller.pos.findClosestByRange(directPositions);
                 }
                 else {
-                    targetPos = creep.pos.findClosestByRange(positionCandidates);
+                    targetPos = container.pos.findClosestByRange(positionCandidates);
                 }
 
                 if (targetPos) {
@@ -53,6 +62,12 @@ module.exports = {
             }
             if (targetPos) {
                 creep.moveTo(targetPos, {visualizePathStyle: {stroke: '#ffffff'}});
+            }
+        }
+        else {
+            if (Game.time % 100 === 0 && !hasContainerEnergySource(creep.pos)) {
+                creep.memory.moving = undefined;
+                creep.memory.targetPos = undefined;
             }
         }
 
@@ -69,8 +84,8 @@ module.exports = {
             else if (containers[0]) {
                 creep.withdraw(containers[0], RESOURCE_ENERGY);
             }
-            else if (otherUpgraders[0]) {
-                otherUpgraders[0].transfer(creep, RESOURCE_ENERGY, otherUpgraders[0].carry.energy / 2);
+            else if (otherUpgraders.length > 0) {
+                _.max(otherUpgraders, creep => creep.carry.energy).transfer(creep, RESOURCE_ENERGY);
             }
         }
     }

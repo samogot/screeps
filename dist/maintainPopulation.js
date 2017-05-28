@@ -17,8 +17,8 @@ const computeRules = capacity => ({
         body: [...new Array(Math.min(Math.floor((capacity - 50) / 100), 5)).fill(WORK), MOVE]
     },
     upgrader: {
-        count: 2,
-        body: [...new Array(Math.floor((capacity - 100) / 100)).fill(WORK), CARRY, MOVE]
+        count: 3,
+        body: [...new Array(Math.floor((capacity - 200) / 100)).fill(WORK), CARRY, CARRY, MOVE]
     },
     builder: {
         count: 1,
