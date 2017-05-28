@@ -10,6 +10,7 @@ module.exports =  {
             if (source) {
                 if (creep.pos.isNearTo(source)) {
                     creep.memory.source = source.id;
+                    creep.say('\u26CF harvest')
                 }
                 else {
                     creep.moveTo(source, {visualizePathStyle: {stroke: '#ffaa00'}});

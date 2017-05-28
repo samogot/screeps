@@ -101,7 +101,7 @@ const tryHealCreep = (tower) => {
     return false;
 };
 
-const stopIf = condition => condition;
+const stopIf = condition => condition ? 'stopped' : false;
 
 module.exports = {
 
@@ -109,11 +109,14 @@ module.exports = {
 
     /** @param {StructureTower} tower */
     run: function (tower) {
-        stopIf(tower.energy === 0)
-        || tryAttackHostile(tower)
-        || tryHeavyRepairStructure(tower)
-        || tryHealCreep(tower)
-        || stopIf(tower.energy < tower.energyCapacity / 2)
-        || tryRepairStructure(tower);
+        const working =
+            stopIf(tower.energy === 0)
+            || tryAttackHostile(tower)
+            || tryHeavyRepairStructure(tower)
+            || tryHealCreep(tower)
+            || stopIf(tower.energy < tower.energyCapacity / 2)
+            || tryRepairStructure(tower);
+
+        tower.memory.working = working === true;
     }
 };
