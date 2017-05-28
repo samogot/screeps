@@ -53,16 +53,23 @@ Creep.prototype.getRealPower = function (needBodyPart, basePower, method) {
 };
 
 /**
- * @deprecated computation is incorrect
+ * Computes real damage applied to creep's body parts taking tough boosts into account
  * @this {Creep}
+ * @param incomeDamage
  * @return {number}
  */
-Creep.prototype.getDefenceBoost = function () {
-    const firstActiveBodyPart = this.body.find(bodyPart => bodyPart.hits > 0);
-    if (firstActiveBodyPart.type === TOUGH && firstActiveBodyPart.boost) {
-        return BOOSTS[TOUGH][firstActiveBodyPart.boost].damage;
+Creep.prototype.getRealDamage = function (incomeDamage) {
+    let realDamage = 0, restOfIncomeDamage = incomeDamage;
+    for (let bodyPart of this.body) {
+        if (bodyPart.hits > 0) {
+            const boost = bodyPart.type === TOUGH && bodyPart.boost ? BOOSTS[TOUGH][bodyPart.boost].damage : 1;
+            const damageToBodyPart = Math.min(bodyPart.hits, restOfIncomeDamage * boost);
+            realDamage += damageToBodyPart;
+            restOfIncomeDamage -= damageToBodyPart / boost;
+        }
+        if (restOfIncomeDamage === 0) break;
     }
-    return 1;
+    return realDamage + restOfIncomeDamage;
 };
 
 

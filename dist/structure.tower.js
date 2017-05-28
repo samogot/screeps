@@ -1,14 +1,14 @@
 /** @param {Creep} creep */
-const getMeleeHealPerTick = (creep) => creep.getRealPower(HEAL, HEAL_POWER, 'heal');
+const getMeleeHealInThisTick = (creep) => creep.getRealPower(HEAL, HEAL_POWER, 'heal');
 
 /** @param {Creep} creep */
-const getRangedHealPerTick = (creep) => creep.getRealPower(HEAL, RANGED_HEAL_POWER, 'rangedHeal');
+const getRangedHealInThisTick = (creep) => creep.getRealPower(HEAL, RANGED_HEAL_POWER, 'rangedHeal');
 
 /**
  * @param {StructureTower} tower
  * @param {Creep} creep
  */
-const getTowerDamagePerTick = (tower, creep) => tower.getAttackPowerAt(creep) * creep.getDefenceBoost();
+const getTowerDamageInThisTick = (tower, creep) => creep.getRealDamage(tower.getAttackPowerAt(creep));
 
 /**
  * @param {StructureTower} tower
@@ -23,11 +23,11 @@ const tryAttackHostile = (tower) => {
         const rangeFromHealerToClosest = closestHostileHealer.pos.getRangeTo(closestHostile);
         if (rangeFromHealerToClosest <= 3) {
             const KILL_IN_N_TICKS = 3;
-            const dpt = getTowerDamagePerTick(tower, closestHostile);
+            const dpt = getTowerDamageInThisTick(tower, closestHostile);
             if (closestHostile.hits < dpt * KILL_IN_N_TICKS) {
-                const meleeHPT = _.sum(closestHostile.pos.findInRange(FIND_HOSTILE_CREEPS, 1), creep => getMeleeHealPerTick(creep));
+                const meleeHPT = _.sum(closestHostile.pos.findInRange(FIND_HOSTILE_CREEPS, 1), creep => getMeleeHealInThisTick(creep));
                 const rangedHPT = _.sum(closestHostile.pos.findInRange(FIND_HOSTILE_CREEPS, 3,
-                    {filter: creep => closestHostile.pos.getRangeTo(creep) > 1}), creep => getRangedHealPerTick(creep));
+                    {filter: creep => closestHostile.pos.getRangeTo(creep) > 1}), creep => getRangedHealInThisTick(creep));
                 const hpt = meleeHPT + rangedHPT;
                 if (closestHostile.hits < (dpt - hps) * KILL_IN_N_TICKS) {
                     tower.attack(closestHostile);
@@ -35,7 +35,7 @@ const tryAttackHostile = (tower) => {
                 }
             }
             if (closestHostile.pos.getRangeTo(tower) <= TOWER_OPTIMAL_RANGE
-                && getTowerDamagePerTick(tower, closestHostileHealer) <= getMeleeHealPerTick(closestHostileHealer)) {
+                && getTowerDamageInThisTick(tower, closestHostileHealer) <= getMeleeHealInThisTick(closestHostileHealer)) {
                 const allHostileInOptimalRange = tower.pos.findInRange(FIND_HOSTILE_CREEPS, TOWER_OPTIMAL_RANGE);
                 const lowestHitsHostile = allHostileInOptimalRange.reduce((m, c) => m.hits < c.hits ? m : c);
                 tower.attack(lowestHitsHostile);
