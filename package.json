@@ -10,6 +10,7 @@
     "grunt-screeps": "^1.2.1"
   },
   "dependencies": {
+    "@types/lodash": "^3.10.1",
     "lodash": "^3.10.1"
   }
 }

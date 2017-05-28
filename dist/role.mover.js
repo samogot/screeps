@@ -36,6 +36,13 @@ const getCreepsByRoles = (room, roles) =>
 const transferToClosest = (creep, targets) => {
     if (targets.length > 0) {
         const target = creep.pos.findClosestByPath(targets);
+        if (target.structureType === STRUCTURE_STORAGE && creep.pos.isNearTo(target)) {
+            for (let resourceType of _.keys(creep.carry)) {
+                if (resourceType !== RESOURCE_ENERGY && creep.transfer(target, resourceType) === OK) {
+                    return true;
+                }
+            }
+        }
         if (creep.transfer(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
             if (creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}}) === ERR_NO_PATH) {
                 return false;
@@ -53,7 +60,7 @@ module.exports = {
 
     /** @param {Creep} creep **/
     run: function (creep) {
-        if (creep.carry.energy === 0 || creep.carry.energy < creep.carryCapacity && (creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1).length > 0 || creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: struct => struct.structureType === STRUCTURE_CONTAINER && !struct.pos.inRangeTo(struct.room.controller, 4)}).length > 0)) {
+        if (creep.carry.energy === 0 || _.sum(creep.carry) < creep.carryCapacity && (creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1).length > 0 || creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: struct => struct.structureType === STRUCTURE_CONTAINER && !struct.pos.inRangeTo(struct.room.controller, 4)}).length > 0)) {
             getEnergy(creep);
         }
         else {
