@@ -36,8 +36,8 @@ module.exports = {
             }
             if (!targetPos) {
                 const positionCandidates = [];
-                for (let i = -3; i <= 3; ++i) {
-                    for (let j = -3; j <= 3; ++j) {
+                for (let i = 3; i >= -3; --i) {
+                    for (let j = 3; j >= -3; --j) {
                         const position = creep.room.getPositionAt(creep.room.controller.pos.x + i, creep.room.controller.pos.y + j);
                         if ((!position.isObstacle || position.isEqualTo(creep)) && hasAnyEnergySource(position)) {
                             positionCandidates.push(position);
@@ -66,7 +66,7 @@ module.exports = {
         }
         else {
             if (Game.time % 100 === 0 && !hasContainerEnergySource(creep.pos)) {
-                creep.memory.moving = undefined;
+                creep.memory.moving = true;
                 creep.memory.targetPos = undefined;
             }
         }
