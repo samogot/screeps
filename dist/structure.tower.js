@@ -29,7 +29,7 @@ const tryAttackHostile = (tower) => {
                 const rangedHPT = _.sum(closestHostile.pos.findInRange(FIND_HOSTILE_CREEPS, 3,
                     {filter: creep => closestHostile.pos.getRangeTo(creep) > 1}), creep => getRangedHealInThisTick(creep));
                 const hpt = meleeHPT + rangedHPT;
-                if (closestHostile.hits < (dpt - hps) * KILL_IN_N_TICKS) {
+                if (closestHostile.hits < (dpt - hpt) * KILL_IN_N_TICKS) {
                     tower.attack(closestHostile);
                     return true;
                 }
@@ -37,8 +37,8 @@ const tryAttackHostile = (tower) => {
             if (closestHostile.pos.getRangeTo(tower) <= TOWER_OPTIMAL_RANGE
                 && getTowerDamageInThisTick(tower, closestHostileHealer) <= getMeleeHealInThisTick(closestHostileHealer)) {
                 const allHostileInOptimalRange = tower.pos.findInRange(FIND_HOSTILE_CREEPS, TOWER_OPTIMAL_RANGE);
-                const lowestHitsHostile = allHostileInOptimalRange.reduce((m, c) => m.hits < c.hits ? m : c);
-                tower.attack(lowestHitsHostile);
+                const randomHostile = allHostileInOptimalRange[Math.floor(Math.random() * allHostileInOptimalRange.length)];
+                tower.attack(randomHostile);
                 return true;
             }
             tower.attack(closestHostileHealer);
