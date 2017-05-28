@@ -71,7 +71,7 @@ module.exports = {
             }
         }
 
-        if (creep.carry.energy > 0) {
+        if (creep.carry.energy >= creep.getRealPower(WORK, UPGRADE_CONTROLLER_POWER, 'upgradeController')) {
             creep.upgradeController(creep.room.controller)
         }
         else {
