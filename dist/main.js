@@ -6,7 +6,7 @@ const roles = [
     require('role.builder'),
     require('role.mover'),
 ];
-
+require('extendPrototypes');
 
 module.exports.loop = function () {
 

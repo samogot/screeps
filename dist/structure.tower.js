@@ -1,44 +1,14 @@
+/** @param {Creep} creep */
+const getMeleeHealPerTick = (creep) => creep.getRealPower(HEAL, HEAL_POWER, 'heal');
+
+/** @param {Creep} creep */
+const getRangedHealPerTick = (creep) => creep.getRealPower(HEAL, RANGED_HEAL_POWER, 'rangedHeal');
+
 /**
  * @param {StructureTower} tower
- * @param {RoomPosition|RoomObject} target
- * @param {number} optimalPower
- * @return {number}
- */
-const getPowerAt = (tower, target, optimalPower) => optimalPower * TOWER_OPTIMAL_RANGE
-/ Math.max(Math.min(tower.pos.getRangeTo(target), TOWER_FALLOFF_RANGE), TOWER_OPTIMAL_RANGE);
-
-/**
  * @param {Creep} creep
- * @param {string} needBodyPart
- * @param {number} basePower
- * @param {string} method
  */
-const getRealPower = (creep, needBodyPart, basePower, method) => _.sum(creep.body, bodyPart => {
-    let power = 0;
-    if (bodyPart.hits > 0 && bodyPart.type === needBodyPart) {
-        power = basePower;
-        if (bodyPart.boost) {
-            power *= BOOSTS[needBodyPart][bodyPart.boost][method];
-        }
-    }
-    return power;
-});
-
-const getDefenceBoost = creep => {
-    const firstActiveBodyPart = creep.body.find(bodyPart => bodyPart.hits > 0);
-    if (firstActiveBodyPart.type === TOUGH && firstActiveBodyPart.boost) {
-        return BOOSTS[TOUGH][firstActiveBodyPart.boost].damage;
-    }
-    return 1;
-};
-
-/** @param {Creep} creep */
-const getMeleeHealPerTick = (creep) => getRealPower(creep, HEAL, HEAL_POWER, 'heal');
-
-/** @param {Creep} creep */
-const getRangedHealPerTick = (creep) => getRealPower(creep, HEAL, RANGED_HEAL_POWER, 'rangedHeal');
-
-const getTowerDamagePerTick = (tower, creep) => getPowerAt(tower, creep, TOWER_POWER_ATTACK) * getDefenceBoost(creep);
+const getTowerDamagePerTick = (tower, creep) => tower.getAttackPowerAt(creep) * creep.getDefenceBoost();
 
 /**
  * @param {StructureTower} tower
@@ -105,7 +75,7 @@ const tryHeavyRepairStructure = (tower) => {
  */
 const tryRepairStructure = (tower) => {
     const closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-        filter: (structure) => structure.hits <= structure.hitsMax - getPowerAt(tower, structure, TOWER_POWER_REPAIR)
+        filter: (structure) => structure.hits <= structure.hitsMax - tower.getRepairPowerAt(structure)
         && structure.structureType !== STRUCTURE_WALL
         && structure.structureType !== STRUCTURE_RAMPART
     });
@@ -122,7 +92,7 @@ const tryRepairStructure = (tower) => {
  */
 const tryHealCreep = (tower) => {
     const closestDamagedCreep = tower.pos.findClosestByRange(FIND_MY_CREEPS, {
-        filter: creep => creep.hits <= creep.hitsMax - getPowerAt(tower, creep, TOWER_POWER_HEAL)
+        filter: creep => creep.hits <= creep.hitsMax - tower.getHealPowerAt(creep)
     });
     if (closestDamagedCreep) {
         tower.heal(closestDamagedCreep);

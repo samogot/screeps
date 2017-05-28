@@ -1,17 +1,3 @@
-/**
- * @param {RoomPosition} position
- * @returns {boolean}
- */
-const isObstacle = position => {
-    const looks = position.look();
-    return looks.some(look =>
-        look.type === LOOK_CREEPS
-        || (look.type === LOOK_STRUCTURES && OBSTACLE_OBJECT_TYPES.includes(look[LOOK_STRUCTURES].structureType))
-        || (look.type === LOOK_TERRAIN && look[LOOK_TERRAIN] === 'wall')
-    )
-};
-
-
 module.exports = {
 
     name: 'upgrader',
@@ -35,7 +21,7 @@ module.exports = {
             let targetPos;
             if (creep.memory.targetPos) {
                 targetPos = new RoomPosition(creep.memory.targetPos.x, creep.memory.targetPos.y, creep.memory.targetPos.roomName);
-                if (isObstacle(targetPos) || !hasAnyEnergySource(targetPos)) {
+                if (targetPos.isObstacle || !hasAnyEnergySource(targetPos)) {
                     targetPos = null;
                 }
             }
@@ -44,7 +30,7 @@ module.exports = {
                 for (let i = -3; i <= 3; ++i) {
                     for (let j = -3; j <= 3; ++j) {
                         const position = creep.room.getPositionAt(creep.room.controller.pos.x + i, creep.room.controller.pos.y + j);
-                        if (!isObstacle(position) && hasAnyEnergySource(position)) {
+                        if (!position.isObstacle && hasAnyEnergySource(position)) {
                             positionCandidates.push(position);
                         }
                     }

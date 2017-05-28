@@ -36,7 +36,7 @@ const getCreepsByRoles = (room, roles) =>
 const transferToClosest = (creep, targets) => {
     if (targets.length > 0) {
         const target = creep.pos.findClosestByPath(targets);
-        if (target.structureType === STRUCTURE_STORAGE && creep.pos.isNearTo(target)) {
+        if (target && target.structureType === STRUCTURE_STORAGE && creep.pos.isNearTo(target)) {
             for (let resourceType of _.keys(creep.carry)) {
                 if (resourceType !== RESOURCE_ENERGY && creep.transfer(target, resourceType) === OK) {
                     return true;
